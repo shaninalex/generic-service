@@ -1,0 +1,8 @@
+aiohttp
+aiopg[sa]
+sqlalchemy
+alembic
+python-dotenv
+psycopg2-binary
+autopep8
+pydantic
