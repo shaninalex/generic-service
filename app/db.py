@@ -1,3 +1,4 @@
+import aiopg.sa
 from datetime import datetime
 from sqlalchemy import (
     create_engine,
@@ -19,13 +20,17 @@ log = Table(
 )
 
 
+class RecordNotFound(Exception):
+    """Requested record in database was not found"""
+
+
 def create_tables(database_uri, echo):
-    db = create_engine(database_uri, echo=echo)
-    meta.create_all(db)
+    engine = create_engine(database_uri, echo=echo)
+    meta.create_all(engine)
 
 
 async def db_context(app):
-    engine = await create_engine(
+    engine = await aiopg.sa.create_engine(
         dsn=app['config']['DATABASE_URL'],
         echo=app['config']['DEBUG'])
 
