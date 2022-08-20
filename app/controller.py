@@ -1,22 +1,29 @@
 from app.db import log, RecordNotFound
 
 
-async def get_question(conn, question_id):
-    result = await conn.execute(
-        log.select()
-        .where(log.c.id == question_id))
-    question_record = await result.first()
+class LogsController:
+    def __init__(self, connection):
+        self.conn = connection
 
-    if not question_record:
-        msg = "Question with id: {} does not exists"
-        raise RecordNotFound(msg.format(question_id))
+    async def get(self):
+        result = await self.conn.execute(
+            log.select()
+        )
+        logs_records = await result.fetchall()
+        return [{'id': l[0], 'text': l[1], 'created_at': str(l[2])} for l in logs_records]
 
-    return question_record
+    async def get_by_id(self, log_id):
+        result = await self.conn.execute(
+            log.select()
+            .where(log.c.id == log_id))
+        question_record = await result.first()
 
+        if not question_record:
+            raise RecordNotFound(f"Question with id: {log_id} does not exists")
 
-async def controller_get_logs(conn):
-    result = await conn.execute(
-        log.select()
-    )
-    logs_records = await result.fetchall()
-    return logs_records
+        return question_record
+
+    async def post_log(self, text):
+        ins = log.insert().values(text=text)
+        result = await self.conn.execute(ins)
+        return result

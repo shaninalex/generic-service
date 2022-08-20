@@ -10,6 +10,8 @@ done
 
 echo "PostgreSQL started"
 
+echo "\nRun init.py\n"
 python init.py
 
+echo "\nRun Application.\n"
 python app.py
