@@ -16,14 +16,17 @@ class LogsController:
         result = await self.conn.execute(
             log.select()
             .where(log.c.id == log_id))
-        question_record = await result.first()
-
-        if not question_record:
-            raise RecordNotFound(f"Question with id: {log_id} does not exists")
-
-        return question_record
+        log_record = await result.first()
+        if not log_record:
+            raise RecordNotFound(f"Log with id: {log_id} does not exists")
+        return {'id': log_record[0], 'text': log_record[1], 'created_at': str(log_record[2])}
 
     async def post_log(self, text):
         ins = log.insert().values(text=text)
         result = await self.conn.execute(ins)
         return result
+
+    async def delete_by_id(self, log_id):
+        q = log.delete().where(log.c.id == log_id)
+        await self.conn.execute(q)
+        return None

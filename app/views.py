@@ -23,3 +23,23 @@ async def get_logs_list(request):
             })
         except app.db.RecordNotFound as e:
             raise web.HTTPNotFound(text=str(e))
+
+
+async def get_item(request):
+    log_id = request.match_info['log_id']
+    async with request.app['db'].acquire() as conn:
+        try:
+            log = await LogsController(conn).get_by_id(log_id)
+            return web.json_response(log)
+        except app.db.RecordNotFound as e:
+            raise web.HTTPNotFound(text=str(e))
+
+
+async def delete_item(request):
+    log_id = request.match_info['log_id']
+    async with request.app['db'].acquire() as conn:
+        try:
+            await LogsController(conn).delete_by_id(log_id)
+            return web.json_response(None, status=204)
+        except app.db.RecordNotFound as e:
+            raise web.HTTPNotFound(text=str(e))
