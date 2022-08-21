@@ -23,11 +23,10 @@ class LogsController:
     async def create(self, text):
         ins = insert(log).values(text=text)
         result = await self.conn.execute(ins)
-        print(ins)
-        print(result)
         return result
 
     async def delete(self, log_id):
+        await self.get(log_id)
         q = delete(log).where(log.c.id == log_id)
         await self.conn.execute(q)
         return None

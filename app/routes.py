@@ -9,3 +9,4 @@ def setup_routes(app):
     app.router.add_delete('/delete/{log_id}/', views.delete_item)
     app.router.add_patch('/patch/{log_id}/', views.patch_item)
 
+
